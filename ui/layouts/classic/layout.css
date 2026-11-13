@@ -35,8 +35,8 @@ body.page-blue   { background-image: url(../../skins/classic/bkg-blue.gif); }
 #main { padding-left: 24px; text-align: center; }
 .crumbs, h1, h2, .pretitle { text-align: center; }
 .pretitle { color: #ffffcc; text-transform: none; font-size: 16px; letter-spacing: 0; }
-.summary, .subpages, .actions, .status-head { justify-content: center; }
-.card { border-radius: 0; }
+/* No count per colour above the page: Xymon's own pages have none. */
+.summary { display: none; }
 .subpages a { border-radius: 0; background: none; border: 0; font-size: 16px; }
 .group { margin: 0 auto 6px; padding-bottom: 6px; border-bottom: 1px solid #333; }
 table.grid, table.list, .lf, .preview { margin-left: auto; margin-right: auto; }
