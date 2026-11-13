@@ -1,0 +1,253 @@
+/* The structure every layout shares. A layout (layouts/NAME/layout.css) is
+ * loaded after this file and overrides what it wants: mostly the custom
+ * properties below, and the look of the top bar and the groups. The HTML
+ * carries only names of what a thing is -- .group, .dot, .card -- so that
+ * a layout never has to fight it. */
+
+:root {
+	--bg: #0d1117;
+	--panel: #161b22;
+	--panel-2: #1c2230;
+	--border: #30363d;
+	--text: #c9d1d9;
+	--strong: #e6edf3;
+	--muted: #8b949e;
+	--link: #58a6ff;
+	--red: #f85149;
+	--yellow: #d29922;
+	--purple: #a371f7;
+	--blue: #58a6ff;
+	--clear: #8b949e;
+	--green: #3fb950;
+	--page: var(--clear);
+	--font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	--mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+	--dot: 16px;
+	color-scheme: dark;
+}
+body.page-green  { --page: var(--green); }
+body.page-yellow { --page: var(--yellow); }
+body.page-red    { --page: var(--red); }
+body.page-purple { --page: var(--purple); }
+body.page-blue   { --page: var(--blue); }
+
+* { box-sizing: border-box; }
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font: 14px/1.4 var(--font);
+}
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+[hidden] { display: none !important; }
+.note { color: var(--muted); margin: 16px; }
+.error { color: var(--red); margin: 16px; }
+
+/* --- Top bar ----------------------------------------------------------- */
+#top {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 16px;
+	padding: 6px 16px;
+	background: var(--panel);
+	border-bottom: 4px solid var(--page);
+}
+#brand { font-weight: 600; font-size: 16px; color: var(--strong); }
+#menu { display: flex; flex-wrap: wrap; gap: 2px; flex: 1; }
+#menu a { padding: 4px 10px; border-radius: 6px; color: var(--text); }
+#menu a:hover { background: var(--panel-2); text-decoration: none; }
+#menu a.current { background: var(--panel-2); color: var(--strong); }
+#find {
+	width: 14em;
+	max-width: 100%;
+	padding: 4px 8px;
+	background: var(--bg);
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	font: inherit;
+}
+#refresh {
+	min-width: 5.5em;
+	text-align: right;
+	color: var(--muted);
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+	user-select: none;
+}
+#refresh.stale { color: var(--red); }
+
+/* Everything is centred, as on Xymon's own pages; what reads as text --
+ * a host's name, a status text, a form -- stays left-aligned inside it. */
+#main { padding: 12px 16px 24px; text-align: center; }
+#bottom { padding: 8px 16px 16px; color: var(--muted); font-size: 12px; text-align: center; }
+
+/* --- Breadcrumb and headings ------------------------------------------ */
+.crumbs { margin: 0 0 10px; color: var(--muted); }
+.crumbs a { color: var(--text); }
+.crumbs .here { color: var(--strong); font-weight: 600; }
+h1 { font-size: 18px; margin: 0 0 10px; color: var(--strong); font-weight: 600; }
+h2 { font-size: 15px; margin: 18px 0 8px; color: var(--strong); font-weight: 600; }
+.pretitle { margin: 18px 0 6px; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+
+/* --- Summary: a count per colour, a click filters --------------------- */
+.summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.card {
+	min-width: 76px;
+	padding: 6px 12px;
+	background: var(--panel);
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-left: 4px solid var(--c, var(--border));
+	border-radius: 8px;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+.card:hover { background: var(--panel-2); }
+.card.active { outline: 2px solid var(--c, var(--link)); }
+.card.zero { opacity: .45; }
+.card .n { display: block; font-size: 22px; font-weight: 600; line-height: 1.1; color: var(--c, var(--strong)); }
+.card .l { display: block; font-size: 12px; color: var(--muted); }
+
+/* --- Subpages ---------------------------------------------------------- */
+.subpages { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; }
+.subpages a {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	color: var(--strong);
+}
+.subpages a:hover { background: var(--panel-2); text-decoration: none; }
+.subpages .counts { color: var(--muted); font-size: 12px; }
+
+/* --- The grid: one table per group, hosts down, tests across ---------- */
+.group { margin: 0 0 12px; overflow-x: auto; }
+table.grid { border-collapse: collapse; }
+table.grid th, table.grid td { padding: 3px 6px; text-align: center; white-space: nowrap; }
+table.grid th.gtitle { text-align: left; font-size: 15px; font-weight: 600; color: var(--strong); padding-right: 24px; }
+table.grid th.col { font-size: 12px; font-weight: normal; line-height: 1.15; vertical-align: bottom; }
+table.grid th.gtitle { vertical-align: bottom; }
+table.grid th.col { color: var(--muted); }
+table.grid td.host { text-align: left; padding-right: 24px; }
+table.grid td.host a { color: var(--strong); }
+table.grid td.host .comment { color: var(--muted); margin-left: 8px; font-size: 12px; }
+table.grid td.none { color: var(--border); }
+table.grid tbody tr:hover td { background: var(--panel-2); }
+tr.filtered, .group.filtered, .subpages li.filtered { display: none; }
+
+/* --- Status icons ------------------------------------------------------ */
+.dot { width: var(--dot); height: var(--dot); vertical-align: middle; border: 0; }
+span.dot {
+	display: inline-block;
+	width: auto;
+	min-width: var(--dot);
+	height: auto;
+	font: 600 15px/1 var(--font);
+	text-align: center;
+	color: var(--clear);
+}
+span.dot-green  { color: var(--green); }
+span.dot-yellow { color: var(--yellow); }
+span.dot-red    { color: var(--red); }
+span.dot-purple { color: var(--purple); }
+span.dot-blue   { color: var(--blue); }
+span.dot-clear, span.dot-unknown { color: var(--clear); }
+span.dot-info, span.dot-trends, span.dot-clientlog { color: var(--muted); }
+/* In characters, a recent change has a ring and an acknowledged one is dimmed
+ * and underlined: what the image sets draw as an icon of their own. */
+span.dot-recent { outline: 1px solid currentColor; outline-offset: 1px; border-radius: 50%; }
+span.dot-ack { opacity: .55; text-decoration: underline; }
+@keyframes dot-blink { 50% { opacity: .35; } }
+body.animated span.dot-red, body.animated span.dot-yellow.dot-recent, body.animated span.dot-purple { animation: dot-blink 1.4s steps(1) infinite; }
+body.animated span.dot-ack { animation: none; }
+@media (prefers-reduced-motion: reduce) { span.dot { animation: none !important; } }
+
+/* --- Lists: a host's tests, the events -------------------------------- */
+table.list { border-collapse: collapse; }
+table.list th, table.list td { padding: 4px 12px 4px 0; text-align: left; vertical-align: top; }
+table.list th { color: var(--muted); font-weight: normal; font-size: 12px; border-bottom: 1px solid var(--border); }
+table.list tbody tr:hover td { background: var(--panel-2); }
+table.list tr.pick { cursor: pointer; }
+table.list td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* --- One status -------------------------------------------------------- */
+.status-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 12px; }
+.status-head .dot { --dot: 28px; }
+.status-head span.dot { font-size: 26px; }
+.status-head h1 { margin: 0; }
+.status-head .meta { color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.actions a, button.plain {
+	padding: 4px 10px;
+	background: var(--panel);
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	font: inherit;
+	cursor: pointer;
+}
+.actions a:hover, button.plain:hover { background: var(--panel-2); text-decoration: none; }
+button.plain.on { border-color: var(--link); color: var(--strong); }
+.box { margin: 0 0 12px; padding: 8px 12px; background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--c, var(--border)); border-radius: 8px; }
+.box.ack { --c: var(--green); }
+.box.disabled { --c: var(--blue); }
+.box b { color: var(--strong); }
+.status-text {
+	margin: 0 0 12px;
+	padding: 10px 12px;
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	font: 13px/1.45 var(--mono);
+	white-space: pre-wrap;
+	overflow-x: auto;
+}
+.status-text table { border-collapse: collapse; white-space: normal; }
+.status-text td, .status-text th { padding: 1px 8px 1px 0; text-align: left; }
+.graph img { max-width: 100%; height: auto; background: #fff; border-radius: 4px; }
+
+/* --- Look and feel ----------------------------------------------------- */
+.lf { display: grid; grid-template-columns: max-content minmax(0, 22em); gap: 10px 16px; align-items: center; margin: 0 0 14px; }
+.lf select, .lf input[type=number] {
+	padding: 4px 8px;
+	background: var(--bg);
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	font: inherit;
+}
+.lf .from { color: var(--muted); font-size: 12px; }
+.preview { border-collapse: collapse; margin: 0 0 14px; }
+.preview th, .preview td { padding: 4px 12px 4px 0; text-align: center; }
+.preview th { color: var(--muted); font-weight: normal; font-size: 12px; }
+.preview th.row { text-align: left; }
+
+/* --- Centred (see #main) ------------------------------------------------- */
+.summary, .subpages, .actions, .status-head { justify-content: center; }
+.group, table.grid, table.list, .preview, .lf { margin-left: auto; margin-right: auto; }
+.lf { width: max-content; max-width: 100%; text-align: left; }
+.box, .status-text { width: max-content; max-width: 100%; margin-left: auto; margin-right: auto; text-align: left; }
+
+@media (max-width: 640px) {
+	#main { padding: 10px 8px 20px; }
+	#top { padding: 6px 8px; }
+	#find { width: 100%; order: 3; }
+	#menu { order: 2; flex-basis: 100%; flex-wrap: nowrap; overflow-x: auto; }
+	#menu a { white-space: nowrap; }
+	#brand { flex: 1; }
+	table.grid th.gtitle, table.grid td.host { padding-right: 10px; }
+}
+@media print {
+	#top { position: static; }
+	#find, #refresh, .summary, .actions { display: none; }
+}

@@ -1,0 +1,5 @@
+# The clone of xymon-plugins the test container installs the API from: a
+# repository of its own.
+/xymon-plugins/
+# A site's own settings, which an update leaves alone.
+/ui/config.local.json

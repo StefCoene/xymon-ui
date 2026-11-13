@@ -1,0 +1,49 @@
+/* classic: the pages as Xymon has always shown them -- black, the page's
+ * colour as the band down its side, Xymon's own fonts and colours, the
+ * groups centred with their title above the columns. */
+:root {
+	--bg: #000;
+	--panel: #000;
+	--panel-2: #1a1a2e;
+	--border: #333;
+	--text: #d8d8bf;
+	--strong: #ffffcc;
+	--muted: #87a9e5;
+	--link: #87a9e5;
+	--red: #ff3030;
+	--yellow: #ffff00;
+	--purple: #c040ff;
+	--blue: #4080ff;
+	--clear: #c0c0c0;
+	--green: #00e000;
+	--font: Arial, Helvetica, sans-serif;
+}
+body { background: #000 url(../../skins/classic/bkg-clear.gif) repeat-y; }
+body.page-green  { background-image: url(../../skins/classic/bkg-green.gif); }
+body.page-yellow { background-image: url(../../skins/classic/bkg-yellow.gif); }
+body.page-red    { background-image: url(../../skins/classic/bkg-red.gif); }
+body.page-purple { background-image: url(../../skins/classic/bkg-purple.gif); }
+body.page-blue   { background-image: url(../../skins/classic/bkg-blue.gif); }
+#top {
+	position: static;
+	background: linear-gradient(#1a3a6e, #0b1d3a);
+	border-bottom: 1px solid #4a6aa8;
+}
+#brand { color: #ffffcc; font-size: 18px; }
+#menu a { color: #e8e8e8; border-radius: 0; }
+#menu a.current, #menu a:hover { background: #2a4f8f; color: #fff; }
+#main { padding-left: 24px; text-align: center; }
+.crumbs, h1, h2, .pretitle { text-align: center; }
+.pretitle { color: #ffffcc; text-transform: none; font-size: 16px; letter-spacing: 0; }
+.summary, .subpages, .actions, .status-head { justify-content: center; }
+.card { border-radius: 0; }
+.subpages a { border-radius: 0; background: none; border: 0; font-size: 16px; }
+.group { margin: 0 auto 6px; padding-bottom: 6px; border-bottom: 1px solid #333; }
+table.grid, table.list, .lf, .preview { margin-left: auto; margin-right: auto; }
+table.grid th.gtitle { font-size: 16px; color: #fffff0; }
+table.grid th.col { color: #87a9e5; }
+table.grid td.host a { color: #ffffcc; font-size: 15px; }
+.box, .status-text { border-radius: 0; text-align: left; max-width: 1100px; margin-left: auto; margin-right: auto; }
+.status-text { background: #000; border-color: #333; }
+.lf { text-align: left; width: max-content; max-width: 100%; }
+@media (max-width: 640px) { #main { padding-left: 14px; } }

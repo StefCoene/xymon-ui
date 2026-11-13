@@ -1,0 +1,14 @@
+/* modern: a dark page, every group of hosts a card, the top bar's bottom
+ * edge in the colour of the page. base.css already has its colours; this
+ * file only adds the cards. */
+.group {
+	width: max-content;
+	max-width: 100%;
+	padding: 6px 8px;
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+}
+table.grid td { border-top: 1px solid rgba(48, 54, 61, .5); }
+#top { box-shadow: 0 2px 6px rgba(0, 0, 0, .5); }

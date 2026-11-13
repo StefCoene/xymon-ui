@@ -1,0 +1,38 @@
+{
+ "type": "gif",
+ "icons": [
+  "arrow",
+  "blue-ack",
+  "blue-recent",
+  "blue",
+  "clear-recent",
+  "clear",
+  "clientlog",
+  "green-ack",
+  "green-recent",
+  "green",
+  "info",
+  "purple-ack",
+  "purple-recent",
+  "purple",
+  "red-ack",
+  "red-recent",
+  "red",
+  "trends",
+  "unknown-recent",
+  "unknown",
+  "yellow-ack",
+  "yellow-recent",
+  "yellow",
+  "zoom"
+ ],
+ "static": [
+  "blue-recent",
+  "purple-recent",
+  "purple",
+  "red-recent",
+  "red",
+  "yellow-recent",
+  "yellow"
+ ]
+}

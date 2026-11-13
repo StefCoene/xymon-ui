@@ -1,0 +1,13 @@
+{
+  "title": "Xymon",
+  "api": "../api/v1",
+  "cgi": "/xymon-cgi",
+  "classic": "/xymon/",
+  "recentHours": 24,
+  "defaults": {
+    "layout": "modern",
+    "skin": "vector",
+    "animation": true,
+    "refresh": 60
+  }
+}

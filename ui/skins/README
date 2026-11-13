@@ -1,0 +1,22 @@
+Icon sets ("skins") for the Xymon pages. Each directory is one set, with a
+skin.json that says what it holds:
+
+    {"type": "svg", "icons": ["green", "green-recent", ...], "static": ["red", ...]}
+
+"type" is the files' extension, "icons" the names the set has, and "static"
+the names that also have a still variant in static/, used when moving icons
+are switched off. index.json lists the sets the Look and feel page offers;
+"text" there is the set drawn in characters, which needs no files.
+
+classic: the icons of Xymon itself, from xymond/wwwfiles/gifs in the Xymon
+    source. Copyright (C) Henrik Storner and the Xymon contributors.
+accessible: every colour has its own shape as well as its own colour, in
+    the Okabe-Ito palette, so a status can be told apart without colour
+    vision.
+vector: flat icons, a different symbol for each colour; a recent change is
+    a face.
+
+accessible and vector: Copyright (C) 2026 Stef Coene.
+
+All three are distributed under the GNU General Public License version 2;
+see LICENSE at the top of this repository.
