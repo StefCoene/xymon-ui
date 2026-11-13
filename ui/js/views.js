@@ -7,7 +7,7 @@ import {
 	COLOURS, COLUMN_ICONS, h, dot, ago, span, when
 } from "./core.js";
 import {
-	board, colourOf, displayName, pageHosts, statesOf, allStates, worst, counts,
+	board, colourOf, displayName, pageHosts, pageOfHost, statesOf, allStates, worst, counts,
 	columnsOf, isNonGreen
 } from "./model.js";
 
@@ -111,14 +111,17 @@ function applyFilter(root) {
 	}
 }
 
-function crumbs(page) {
-	const trail = [];
-	for (let p = page; p; p = p.parent) trail.unshift(p);
+/* Where a page is: the pages above it, each a link, down to this one.
+ * TAIL adds what is below the page -- a host, then one of its tests -- as
+ * [name, address] pairs; the last of all is where the reader is, and no link. */
+function crumbs(page, tail) {
+	const items = [];
+	for (let p = page; p; p = p.parent) items.unshift([p.path ? (p.title || p.name) : "Top", pageLink(p.path)]);
+	items.push(...(tail || []));
 	const nav = h("nav", { class: "crumbs", "aria-label": "Page" });
-	trail.forEach((p, i) => {
-		const name = p.path ? (p.title || p.name) : "Top";
+	items.forEach(([name, href], i) => {
 		if (i) nav.append(" / ");
-		nav.append(i === trail.length - 1 ? h("span", { class: "here" }, name) : h("a", { href: pageLink(p.path) }, name));
+		nav.append(i === items.length - 1 ? h("span", { class: "here" }, name) : h("a", { href }, name));
 	});
 	return nav;
 }
@@ -208,6 +211,7 @@ export function hostView(host) {
 			h("td", { class: "num", title: st.time ? when(st.time) : null }, st.time ? ago(st.time) : "")));
 	}
 	const node = h("div", null,
+		crumbs(pageOfHost(host), [[displayName(host), hostLink(host)]]),
 		h("div", { class: "status-head" },
 			dot(worst(states)),
 			h("h1", null, displayName(host)),
@@ -338,7 +342,7 @@ export async function statusView(host, test) {
 	const acked = !!st.acknowledged;
 	const recent = !!since && Date.now() - since < (cfg.recentHours || 24) * 3600e3;
 	const node = h("div", null,
-		h("nav", { class: "crumbs" }, h("a", { href: hostLink(host) }, displayName(host)), " / ", h("span", { class: "here" }, test)),
+		crumbs(pageOfHost(host), [[displayName(host), hostLink(host)], [test, statusLink(host, test)]]),
 		h("div", { class: "status-head" },
 			dot(colour, { recent, ack: acked }),
 			h("h1", null, displayName(host) + " · " + test),

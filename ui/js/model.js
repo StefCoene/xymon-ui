@@ -55,6 +55,15 @@ export function displayName(host) {
 	return (info && info.name) || host;
 }
 
+/* The page a host is on: the first one hosts.cfg lists it on, or null for
+ * a host on no page. */
+export function pageOfHost(host) {
+	for (const page of board.byPath.values()) {
+		if ((page.groups || []).some((g) => g.hosts.includes(host))) return page;
+	}
+	return null;
+}
+
 /* The hosts of a page: its own groups', and with DEEP its subpages' too. */
 export function pageHosts(page, deep) {
 	const out = new Set();
