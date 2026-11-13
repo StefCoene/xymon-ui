@@ -30,41 +30,54 @@ page links to Xymon's own page for them.
 
 - A Xymon server, unmodified. Tried with 4.3.30 as Ubuntu 22.04 packages it,
   and with a 4.3.31.
-- `xymonapi` with four additions these pages rely on, which are not in
-  xymon-plugins yet: branch
-  [`xymon-ui` of StefCoene/xymon-plugins](https://github.com/StefCoene/xymon-plugins/tree/xymon-ui).
-  They are: `/pages`, the page tree of `hosts.cfg`; `acknowledged` and
-  `disabled` in `/states`; serving these pages at `/xymon/ui/`; and three
-  fixes for Ubuntu 22.04's own Python packages (fastapi 0.63, uvicorn 0.15).
+- `xymonapi` with two additions these pages rely on, which are not in
+  xymon-plugins yet: `/pages`, the page tree of `hosts.cfg`, and
+  `acknowledged` and `disabled` in `/states`. They are on branch
+  [`xymon-ui` of StefCoene/xymon-plugins](https://github.com/StefCoene/xymon-plugins/tree/xymon-ui),
+  which also draws a graph without asking the web server for it, starts
+  under the Xymon that Debian and Ubuntu package, and runs with Ubuntu
+  22.04's own Python packages (fastapi 0.63, uvicorn 0.15).
 - A current browser.
 
 ## Installing
 
-On the Xymon server, as the Xymon user, with the API installed from the
-branch above (`./install.sh install-server xymonapi`, see its README):
-
-```sh
-cp -r ui "$XYMONHOME/ext/xymon-ui"
-```
-
-Restart the API (stop it; xymonlaunch starts it again). It then serves the
-pages at `/xymon/ui/` on its own port, behind the same password check as
-the API. To reach them through the web server, pass `/xymon/ui/` and
-`/xymon/api/` on to the API; for Apache:
+The pages are plain files: the web server that serves Xymon's own pages
+serves these too, and passes `/xymon/api/` on to the API, so that the
+pages and the API they read are at one address. On the Xymon server, with
+the API installed from the branch above (`./install.sh install-server
+xymonapi`, see its README), copy `ui/` to where the web server may read
+it, and for Apache, with mod_proxy, mod_proxy_http and mod_headers:
 
 ```apache
+Alias "/xymon/ui" "/usr/local/share/xymon-ui"
+<Directory "/usr/local/share/xymon-ui">
+   Require all granted
+   Header set Cache-Control "no-cache"
+</Directory>
 <Location "/xymon/api/">
    ProxyPass "http://127.0.0.1:1986/xymon/api/"
    ProxyPassReverse "http://127.0.0.1:1986/xymon/api/"
 </Location>
-<Location "/xymon/ui/">
-   ProxyPass "http://127.0.0.1:1986/xymon/ui/"
-   ProxyPassReverse "http://127.0.0.1:1986/xymon/ui/"
-</Location>
 ```
 
-The pages can also be served by any web server as plain files, with `api`
-in the configuration naming where the API is, on the same origin.
+- The `Alias` must be read before Xymon's own `Alias /xymon`, which
+  otherwise takes the path: on Debian and Ubuntu a file named
+  `conf-available/xymon-ui.conf` is, since it sorts before `xymon.conf`.
+- `Cache-Control: no-cache` makes a browser ask again for each file, and
+  get a short 304 while it is the same; without it a browser goes on using
+  a stylesheet or a script it kept, after an update.
+- `Require all granted` is for the example: give the pages the access
+  rules Xymon's own pages have. The API checks its own password, when it
+  has one, whatever the web server asks.
+
+### Without a web server
+
+The API of the branch above can serve the pages itself, which is how the
+test container below runs them and enough for a look through an SSH
+tunnel: copy `ui/` to `$XYMONHOME/ext/xymon-ui` and restart the API. The
+pages are then at `/xymon/ui/` on the API's own port, behind its password
+check, with the same `Cache-Control`. This is a convenience of that
+branch and is not proposed for xymon-plugins.
 
 ## Settings
 
