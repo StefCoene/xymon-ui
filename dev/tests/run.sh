@@ -10,13 +10,14 @@
 # repository; it is cloned and built inside a volume, xymon-ui-src, kept
 # between runs and rebuilt when the checkout's HEAD has moved. TEST_DIR is
 # what the plugins' own runner takes: plugins/xymonapi/tests, tests/compat ...
+# XYMON_PLUGINS names another copy of xymon-plugins to test.
 here=`cd "\`dirname "$0"\`" && pwd`
 root=`cd "$here/../.." && pwd`
 src=${1:-$root/../xymon}
 [ $# -gt 0 ] && shift
 [ -d "$src/.git" ] || { echo "$src is not a Xymon checkout" >&2; exit 2; }
 docker build -q -t xymon-ui-tests "$here" >/dev/null || exit 1
-exec docker run --rm -v "$root/xymon-plugins":/plugins:ro -v "`cd "$src" && pwd`":/xymon:ro \
+exec docker run --rm -v "${XYMON_PLUGINS:-$root/xymon-plugins}":/plugins:ro -v "`cd "$src" && pwd`":/xymon:ro \
 	-v xymon-ui-src:/build -e XYMONAPI_NO_SKIP="${XYMONAPI_NO_SKIP:-}" xymon-ui-tests sh -c '
 	set -e
 	git config --global --add safe.directory "*"
