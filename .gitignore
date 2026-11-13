@@ -3,5 +3,3 @@
 /xymon-plugins/
 # A site's own settings, which an update leaves alone.
 /ui/config.local.json
-# A built Xymon source tree, for the tests of xymon-plugins (XYMON_SRC).
-/xymon-src/
