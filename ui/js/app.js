@@ -55,8 +55,8 @@ async function draw() {
 	document.body.className = document.body.className.replace(/\bpage-[a-z]+\b/g, "").trim() + " page-" + out.colour;
 	document.title = out.colour + ": " + cfg.title + " – " + out.title;
 	document.getElementById("favicon").href = favicon(out.colour);
-	const current = { page: "board", host: "board", status: "board", find: "board" }[r.view] || r.view;
-	for (const a of document.querySelectorAll("#menu a[data-view]")) a.classList.toggle("current", a.dataset.view === current);
+	/* The board itself has no entry in the menu: the title leads to it. */
+	for (const a of document.querySelectorAll("#menu a[data-view]")) a.classList.toggle("current", a.dataset.view === r.view);
 	document.getElementById("bottom").textContent = board.loaded
 		? "Board read " + new Date(board.loaded).toLocaleTimeString() + (problem ? " – the last refresh failed: " + problem.message : "")
 		: "";
