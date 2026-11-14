@@ -42,7 +42,7 @@ async function build(r) {
 
 async function draw() {
 	const mine = ++drawing, r = route(), key = window.location.hash;
-	if (key !== lastRoute) { views.ui.filter = null; lastRoute = key; }
+	if (key !== lastRoute) { views.ui.filter = null; views.ui.open = null; lastRoute = key; }
 	let out;
 	try {
 		if (!board.root) throw problem || new Error("the board has not been read yet");

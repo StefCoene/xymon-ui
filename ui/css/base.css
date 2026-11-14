@@ -179,6 +179,9 @@ table.list th, table.list td { padding: 4px 12px 4px 0; text-align: left; vertic
 table.list th { color: var(--muted); font-weight: normal; font-size: 12px; border-bottom: 1px solid var(--border); }
 table.list tbody tr:hover td { background: var(--panel-2); }
 table.list tr.pick { cursor: pointer; }
+table.list tr.open td { background: var(--panel-2); }
+table.list tr.detail td { padding: 4px 0 12px; }
+table.list tr.detail:hover td { background: none; }
 table.list td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* --- One status -------------------------------------------------------- */

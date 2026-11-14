@@ -11,8 +11,9 @@ import {
 	columnsOf, isNonGreen
 } from "./model.js";
 
-/* What survives a refresh of the same page: the summary card that filters. */
-export const ui = { filter: null };
+/* What survives a refresh of the same page: the summary card that filters,
+ * and the change on the events page whose status text is open. */
+export const ui = { filter: null, open: null };
 
 const enc = encodeURIComponent;
 const pageLink = (path) => (path ? "#/page/" + path.split("/").map(enc).join("/") : "#/");
@@ -310,6 +311,23 @@ function graph(host, test) {
 	return box;
 }
 
+/* The status text Xymon saved at a change, as a node that fills in once read.
+ * A saved text never changes, so each is read once. */
+const saved = new Map();
+function savedStatus(host, test, ev) {
+	const key = host + "\n" + test + "\n" + ev.epoch;
+	const box = h("div", null, h("p", { class: "note" }, "Loading…"));
+	if (!saved.has(key)) {
+		const p = api("/histlog", { entity: host, test, time: ev.epoch });
+		p.catch(() => saved.delete(key));	/* not kept: try again next time */
+		saved.set(key, p);
+	}
+	saved.get(key).then(
+		(log) => box.replaceChildren(h("h2", null, "Status at " + when(Date.parse(ev.time))), statusText(log.text)),
+		(e) => box.replaceChildren(h("p", { class: "note" }, "No status text was saved at this change: " + e.message)));
+	return box;
+}
+
 function history(host, test, events) {
 	const body = h("tbody"), shown = h("div");
 	for (const ev of events) {
@@ -319,15 +337,7 @@ function history(host, test, events) {
 			h("td", null, colourOf(ev.verdict)),
 			h("td", { class: "num" }, ev.previous_duration !== null && ev.previous_duration !== undefined
 				? "after " + span(ev.previous_duration) + " " + colourOf(ev.previous) : ""));
-		row.addEventListener("click", async () => {
-			shown.replaceChildren(h("p", { class: "note" }, "Loading…"));
-			try {
-				const log = await api("/histlog", { entity: host, test, time: ev.epoch });
-				shown.replaceChildren(h("h2", null, "Status at " + when(Date.parse(ev.time))), statusText(log.text));
-			} catch (e) {
-				shown.replaceChildren(h("p", { class: "note" }, "No status text was saved at this change: " + e.message));
-			}
-		});
+		row.addEventListener("click", () => shown.replaceChildren(savedStatus(host, test, ev)));
 		body.append(row);
 	}
 	return h("section", null, h("h2", null, "History"),
@@ -382,13 +392,38 @@ export async function statusView(host, test) {
 export async function eventsView() {
 	const ev = await api("/events", { limit: 200 });
 	const body = h("tbody");
+	/* A click on a change opens the status text saved at it in a row of its
+	 * own beneath, and a second click closes it again. */
 	for (const e of ev.items || []) {
-		body.append(h("tr", null,
+		const key = e.entity + "\n" + e.test + "\n" + e.epoch;
+		const row = h("tr", { class: "pick", title: "Show the status text saved at this change" },
 			h("td", { class: "num" }, when(Date.parse(e.time))),
 			h("td", null, h("a", { href: hostLink(e.entity) }, displayName(e.entity))),
 			h("td", null, h("a", { href: statusLink(e.entity, e.test) }, e.test)),
 			h("td", null, dot(colourOf(e.previous)), " → ", dot(colourOf(e.verdict))),
-			h("td", { class: "num" }, e.previous_duration !== null && e.previous_duration !== undefined ? span(e.previous_duration) : "")));
+			h("td", { class: "num" }, e.previous_duration !== null && e.previous_duration !== undefined ? span(e.previous_duration) : ""));
+		const open = () => {
+			const detail = h("tr", { class: "detail" }, h("td", { colspan: 5 }, savedStatus(e.entity, e.test, e)));
+			row.after(detail);
+			row.classList.add("open");
+			return detail;
+		};
+		let detail = ui.open === key ? open() : null;
+		row.addEventListener("click", (c) => {
+			if (c.target.closest("a")) return;	/* the host and test links go to their pages */
+			if (detail) {
+				detail.remove();
+				detail = null;
+				row.classList.remove("open");
+				ui.open = null;
+				return;
+			}
+			for (const other of body.querySelectorAll("tr.open")) other.click();
+			detail = open();
+			ui.open = key;
+		});
+		body.append(row);
+		if (detail) body.append(detail);
 	}
 	const node = h("div", null, h("h1", null, "Events"),
 		(ev.items || []).length
