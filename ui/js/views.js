@@ -293,8 +293,10 @@ export function statusText(text) {
 const RANGES = [["24 hours", "-24h"], ["7 days", "-7d"], ["30 days", "-30d"], ["1 year", "-52w"]];
 
 function graph(host, test) {
-	const img = h("img", { alt: "Graph of " + host + " " + test, loading: "lazy" });
-	const box = h("section", { class: "graph" }, h("h2", null, "Graph"));
+	/* Shown once a graph has come: not lazy, which an image in a hidden box
+	 * would never be fetched by. */
+	const img = h("img", { alt: "Graph of " + host + " " + test });
+	const box = h("section", { class: "graph", hidden: true }, h("h2", null, "Graph"));
 	const buttons = h("div", { class: "actions" });
 	const show = (from, b) => {
 		img.src = apiUrl("/graphs", { entity: host, test, from });
@@ -304,8 +306,13 @@ function graph(host, test) {
 		const b = h("button", { type: "button", class: "plain", onclick: () => show(from, b) }, label);
 		buttons.append(b);
 	}
-	/* No graph for this test, or showgraph not reachable: nothing to show. */
+	/* No graph for this test, or showgraph not reachable: nothing to show.
+	 * For a test without RRD data showgraph draws a PNG of one pixel. */
 	img.addEventListener("error", () => box.remove());
+	img.addEventListener("load", () => {
+		if (img.naturalWidth <= 1) box.remove();
+		else box.hidden = false;
+	});
 	box.append(buttons, img);
 	show(RANGES[0][1], buttons.firstChild);
 	return box;
