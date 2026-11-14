@@ -142,6 +142,7 @@ table.grid td.host { text-align: left; padding-right: 24px; }
 table.grid td.host a { color: var(--strong); }
 table.grid td.host .comment { color: var(--muted); margin-left: 8px; font-size: 12px; }
 table.grid td.none { color: var(--border); }
+table.grid td.htitle { padding-top: 10px; text-align: center; font-weight: 600; color: var(--strong); }
 table.grid tbody tr:hover td { background: var(--panel-2); }
 tr.filtered, .group.filtered, .subpages li.filtered { display: none; }
 

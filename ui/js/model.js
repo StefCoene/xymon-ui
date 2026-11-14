@@ -31,7 +31,7 @@ export async function loadBoard() {
 		const time = s.time ? Date.parse(s.time) : 0;
 		const st = {
 			host: s.entity, test: s.test, colour: colourOf(s.verdict), time,
-			ack: !!s.acknowledged, disabled: !!s.disabled,
+			ack: !!s.acknowledged,
 			recent: !!time && now - time < recent
 		};
 		if (!byHost.has(st.host)) byHost.set(st.host, new Map());

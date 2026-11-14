@@ -79,6 +79,11 @@ function grid(title, hosts, columns) {
 	const body = h("tbody");
 	for (const host of hosts) {
 		const info = board.hosts[host] || {};
+		/* A title line above a host in hosts.cfg: a heading inside the
+		 * group, across the table, as xymongen draws it. */
+		if (info.pretitle) {
+			body.append(h("tr", { class: "htitle" }, h("td", { class: "htitle", colspan: columns.length + 1 }, info.pretitle)));
+		}
 		const row = h("tr", null,
 			h("td", { class: "host" },
 				h("a", { href: hostLink(host), title: host }, displayName(host)),
@@ -207,7 +212,7 @@ export function hostView(host) {
 		body.append(h("tr", null,
 			h("td", null, h("a", { href: statusLink(host, t) }, dot(st.colour, { recent: st.recent, ack: st.ack }))),
 			h("td", null, h("a", { href: statusLink(host, t) }, t)),
-			h("td", null, st.colour + (st.ack ? ", acknowledged" : "") + (st.disabled && st.colour !== "blue" ? ", disabled" : "")),
+			h("td", null, st.colour + (st.ack ? ", acknowledged" : "")),
 			h("td", { class: "num", title: st.time ? when(st.time) : null }, st.time ? ago(st.time) : "")));
 	}
 	const node = h("div", null,
