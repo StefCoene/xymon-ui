@@ -126,7 +126,7 @@ function crumbs(page, tail) {
 	items.push(...(tail || []));
 	const nav = h("nav", { class: "crumbs", "aria-label": "Page" });
 	items.forEach(([name, href], i) => {
-		if (i) nav.append(" / ");
+		if (i) nav.append(h("span", { class: "sep", "aria-hidden": "true" }, "»"));
 		nav.append(i === items.length - 1 ? h("span", { class: "here" }, name) : h("a", { href }, name));
 	});
 	return nav;
